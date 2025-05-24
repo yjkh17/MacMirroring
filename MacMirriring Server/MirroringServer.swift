@@ -4,6 +4,7 @@ import CoreGraphics
 import Combine
 import ImageIO
 import AppKit
+import ScreenCaptureKit
 
 class MirroringServer: NSObject, ObservableObject {
     @Published var isRunning = false
@@ -13,6 +14,7 @@ class MirroringServer: NSObject, ObservableObject {
     private var connections: [NWConnection] = []
     private var screenCaptureTimer: Timer?
     private var netService: NetService?
+    private var frameCounter = 0
     
     func start() {
         do {
@@ -97,17 +99,23 @@ class MirroringServer: NSObject, ObservableObject {
     }
     
     private func startScreenCapture() {
-        screenCaptureTimer = Timer.scheduledTimer(withTimeInterval: 1.0/30.0, repeats: true) { [weak self] _ in
-            self?.captureAndSendScreen()
+        // 5 FPS for real screen capture
+        screenCaptureTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
+            Task {
+                await self?.captureAndSendScreen()
+            }
         }
     }
     
-    private func captureAndSendScreen() {
-        guard let screenImage = captureScreen() else { return }
+    private func captureAndSendScreen() async {
+        guard let screenImage = await captureScreen() else { return }
+        
+        let lengthData = withUnsafeBytes(of: UInt32(screenImage.count).bigEndian) { Data($0) }
+        let frameData = lengthData + screenImage
         
         // Send to all connected clients
         for connection in connections {
-            connection.send(content: screenImage, completion: .contentProcessed { error in
+            connection.send(content: frameData, completion: .contentProcessed { error in
                 if let error = error {
                     print("Failed to send screen data: \(error)")
                 }
@@ -115,16 +123,66 @@ class MirroringServer: NSObject, ObservableObject {
         }
     }
     
-    private func captureScreen() -> Data? {
-        guard let screen = NSScreen.main else {
-            print("No main screen found")
+    private func captureScreen() async -> Data? {
+        do {
+            // Get available content
+            let availableContent = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+            
+            guard let display = availableContent.displays.first else {
+                print("No displays found")
+                return nil
+            }
+            
+            // Create filter to capture the entire display
+            let filter = SCContentFilter(display: display, excludingWindows: [])
+            
+            // Configure screen capture
+            let configuration = SCStreamConfiguration()
+            configuration.width = Int(display.width)
+            configuration.height = Int(display.height)
+            configuration.minimumFrameInterval = CMTime(value: 1, timescale: 5) // 5 FPS
+            configuration.queueDepth = 5
+            
+            // Capture a single frame
+            let cgImage = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
+            
+            // Convert to JPEG data
+            return convertCGImageToJPEG(cgImage)
+            
+        } catch {
+            print("Screen capture failed: \(error)")
+            // Fallback to test pattern if screen capture fails
+            return createTestPattern()
+        }
+    }
+    
+    private func convertCGImageToJPEG(_ cgImage: CGImage) -> Data? {
+        let mutableData = CFDataCreateMutable(nil, 0)!
+        guard let destination = CGImageDestinationCreateWithData(mutableData, "public.jpeg" as CFString, 1, nil) else {
+            print("Failed to create image destination")
             return nil
         }
         
-        let rect = screen.frame
-        let screenRect = CGRect(x: 0, y: 0, width: rect.width, height: rect.height)
+        let options: [CFString: Any] = [
+            kCGImageDestinationLossyCompressionQuality: 0.7
+        ]
         
-        // Create a bitmap representation of the screen
+        CGImageDestinationAddImage(destination, cgImage, options as CFDictionary)
+        
+        guard CGImageDestinationFinalize(destination) else {
+            print("Failed to finalize image destination")
+            return nil
+        }
+        
+        return mutableData as Data
+    }
+    
+    // Fallback test pattern if screen capture fails
+    private func createTestPattern() -> Data? {
+        guard let screen = NSScreen.main else { return nil }
+        
+        let rect = screen.frame
+        
         guard let imageRep = NSBitmapImageRep(
             bitmapDataPlanes: nil,
             pixelsWide: Int(rect.width),
@@ -136,43 +194,34 @@ class MirroringServer: NSObject, ObservableObject {
             colorSpaceName: .calibratedRGB,
             bytesPerRow: 0,
             bitsPerPixel: 0
-        ) else {
-            print("Failed to create bitmap representation")
-            return nil
-        }
+        ) else { return nil }
         
-        // Create a graphics context
         let context = NSGraphicsContext(bitmapImageRep: imageRep)
         NSGraphicsContext.saveGraphicsState()
         NSGraphicsContext.current = context
         
-        // Fill with a test pattern for now (since we can't capture screen without permissions)
-        let colors: [NSColor] = [.red, .green, .blue, .yellow, .purple, .orange]
-        let stripHeight = rect.height / CGFloat(colors.count)
+        // Simple test pattern
+        NSColor.systemRed.setFill()
+        NSRect(x: 0, y: 0, width: rect.width, height: rect.height).fill()
         
-        for (index, color) in colors.enumerated() {
-            color.setFill()
-            let stripRect = CGRect(x: 0, y: CGFloat(index) * stripHeight, width: rect.width, height: stripHeight)
-            stripRect.fill()
-        }
-        
-        // Add some text
-        let text = "Mac Screen Mirror Test - \(Date().formatted(date: .omitted, time: .standard))"
+        let text = "Screen Capture Not Available\nUsing Test Pattern"
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 24),
+            .font: NSFont.boldSystemFont(ofSize: 48),
             .foregroundColor: NSColor.white
         ]
-        text.draw(at: CGPoint(x: 50, y: rect.height / 2), withAttributes: attributes)
+        
+        let textSize = text.size(withAttributes: attributes)
+        let textRect = NSRect(
+            x: (rect.width - textSize.width) / 2,
+            y: (rect.height - textSize.height) / 2,
+            width: textSize.width,
+            height: textSize.height
+        )
+        text.draw(in: textRect, withAttributes: attributes)
         
         NSGraphicsContext.restoreGraphicsState()
         
-        // Convert to JPEG data
-        guard let jpegData = imageRep.representation(using: .jpeg, properties: [.compressionFactor: 0.8]) else {
-            print("Failed to create JPEG data")
-            return nil
-        }
-        
-        return jpegData
+        return imageRep.representation(using: .jpeg, properties: [.compressionFactor: 0.7])
     }
 }
 

@@ -10,6 +10,8 @@ class MirroringManager: ObservableObject {
     
     private var browser: NWBrowser?
     private var connection: NWConnection?
+    private var receivedData = Data()
+    private var expectedLength: UInt32?
     
     init() {
         setupBrowser()
@@ -81,13 +83,45 @@ class MirroringManager: ObservableObject {
     private func startReceivingScreenData() {
         connection?.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [weak self] data, _, isComplete, error in
             if let data = data, !data.isEmpty {
-                DispatchQueue.main.async {
-                    self?.screenData = data
-                }
+                self?.processReceivedData(data)
+            }
+            
+            if let error = error {
+                print("Receive error: \(error)")
+                return
             }
             
             if !isComplete {
                 self?.startReceivingScreenData()
+            }
+        }
+    }
+    
+    private func processReceivedData(_ data: Data) {
+        receivedData.append(data)
+        
+        while receivedData.count >= 4 {
+            if expectedLength == nil {
+                let lengthBytes = receivedData.prefix(4)
+                var lengthValue: UInt32 = 0
+                _ = lengthBytes.withUnsafeBytes { bytes in
+                    memcpy(&lengthValue, bytes.baseAddress!, 4)
+                }
+                expectedLength = UInt32(bigEndian: lengthValue)
+                receivedData.removeFirst(4)
+            }
+            
+            if let expectedLength = expectedLength, receivedData.count >= expectedLength {
+                let imageData = receivedData.prefix(Int(expectedLength))
+                receivedData.removeFirst(Int(expectedLength))
+                
+                DispatchQueue.main.async {
+                    self.screenData = Data(imageData)
+                }
+                
+                self.expectedLength = nil
+            } else {
+                break
             }
         }
     }
@@ -97,5 +131,7 @@ class MirroringManager: ObservableObject {
         connection = nil
         isConnected = false
         screenData = nil
+        receivedData.removeAll()
+        expectedLength = nil
     }
 }
