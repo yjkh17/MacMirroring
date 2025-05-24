@@ -1,21 +1,24 @@
-//
-//  ContentView.swift
-//  MacMirroring
-//
-//  Created by Yousef Jawdat on 24/05/2025.
-//
-
 import SwiftUI
+import Network
 
 struct ContentView: View {
+    @StateObject private var mirroringManager = MirroringManager()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Mac Mirroring")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                
+                if mirroringManager.isConnected {
+                    MacScreenView(mirroringManager: mirroringManager)
+                } else {
+                    ConnectionView(mirroringManager: mirroringManager)
+                }
+            }
+            .padding()
         }
-        .padding()
     }
 }
 
