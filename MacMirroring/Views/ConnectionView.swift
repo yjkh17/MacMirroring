@@ -1,4 +1,5 @@
 import SwiftUI
+import Network
 
 struct ConnectionView: View {
     @ObservedObject var mirroringManager: MirroringManager
@@ -361,6 +362,9 @@ struct ConnectionView: View {
                 testResultItem("Upload", "\(results.uploadSpeed) Mbps", results.uploadSpeed > 5 ? .green : .orange)
                 testResultItem("Ping", "\(results.ping)ms", results.ping < 50 ? .green : .orange)
                 testResultItem("Jitter", "\(results.jitter)ms", results.jitter < 10 ? .green : .orange)
+                if let iface = results.interfaceType {
+                    testResultItem("Interface", iface.description, .blue)
+                }
             }
         }
         .padding()
@@ -763,16 +767,86 @@ struct ConnectionView: View {
     
     private func runNetworkTest() {
         isRunningNetworkTest = true
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            self.networkTestResults = NetworkTestResults(
-                downloadSpeed: Double.random(in: 15...100),
-                uploadSpeed: Double.random(in: 5...50),
-                ping: Int.random(in: 10...80),
-                jitter: Int.random(in: 1...15)
-            )
-            self.isRunningNetworkTest = false
+        networkTestResults = nil
+
+        let monitor = NWPathMonitor()
+        var interface: NWInterface.InterfaceType? = nil
+        monitor.pathUpdateHandler = { path in
+            if let intf = path.availableInterfaces.first(where: { path.usesInterfaceType($0.type) }) {
+                interface = intf.type
+            }
         }
+        monitor.start(queue: DispatchQueue.global(qos: .background))
+
+        Task {
+            do {
+                let downloadURL = URL(string: "https://speed.hetzner.de/5MB.bin")!
+                let uploadURL = URL(string: "https://httpbin.org/post")!
+
+                let (dlTime, dlBytes) = try await measureDownload(from: downloadURL)
+                let (ulTime, ulBytes) = try await measureUpload(to: uploadURL, size: 1_000_000)
+                let (avgPing, jitterVal) = try await measureLatency(to: downloadURL)
+
+                let results = NetworkTestResults(
+                    downloadSpeed: calculateMbps(bytes: dlBytes, duration: dlTime),
+                    uploadSpeed: calculateMbps(bytes: ulBytes, duration: ulTime),
+                    ping: avgPing,
+                    jitter: jitterVal,
+                    interfaceType: interface
+                )
+
+                await MainActor.run {
+                    self.networkTestResults = results
+                    self.isRunningNetworkTest = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.isRunningNetworkTest = false
+                }
+            }
+
+            monitor.cancel()
+        }
+    }
+
+    private func measureDownload(from url: URL) async throws -> (TimeInterval, Int) {
+        let start = Date()
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let end = Date()
+        return (end.timeIntervalSince(start), data.count)
+    }
+
+    private func measureUpload(to url: URL, size: Int) async throws -> (TimeInterval, Int) {
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        let body = Data(count: size)
+        let start = Date()
+        _ = try await URLSession.shared.upload(for: request, from: body)
+        let end = Date()
+        return (end.timeIntervalSince(start), size)
+    }
+
+    private func measureLatency(to url: URL, count: Int = 4) async throws -> (Int, Int) {
+        var samples: [TimeInterval] = []
+        var headReq = URLRequest(url: url)
+        headReq.httpMethod = "HEAD"
+        for _ in 0..<count {
+            let s = Date()
+            _ = try await URLSession.shared.data(for: headReq)
+            let e = Date()
+            samples.append(e.timeIntervalSince(s))
+            try await Task.sleep(nanoseconds: 200_000_000)
+        }
+        let avg = samples.reduce(0, +) / Double(samples.count)
+        let variance = samples.map { pow($0 - avg, 2.0) }.reduce(0, +) / Double(samples.count)
+        let jitter = sqrt(variance)
+        return (Int(avg * 1000), Int(jitter * 1000))
+    }
+
+    private func calculateMbps(bytes: Int, duration: TimeInterval) -> Double {
+        guard duration > 0 else { return 0 }
+        let bps = Double(bytes) * 8.0 / duration
+        return bps / 1_000_000
     }
     
     private func runFullDiagnostics() {
@@ -980,6 +1054,19 @@ struct NetworkTestResults {
     let uploadSpeed: Double
     let ping: Int
     let jitter: Int
+    let interfaceType: NWInterface.InterfaceType?
+}
+
+extension NWInterface.InterfaceType {
+    var description: String {
+        switch self {
+        case .wifi: return "Wi-Fi"
+        case .cellular: return "Cellular"
+        case .wiredEthernet: return "Ethernet"
+        case .loopback: return "Loopback"
+        default: return "Other"
+        }
+    }
 }
 
 struct DetailRow: View {
