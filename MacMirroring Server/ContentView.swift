@@ -1,16 +1,45 @@
-// ADD: Menu bar integration and system tray functionality
 import SwiftUI
 import AppKit
 
+private class MenuActions: NSObject {
+    weak var server: MirroringServer?
+
+    init(server: MirroringServer?) {
+        self.server = server
+    }
+
+    @objc func showMainWindow(_ sender: Any?) {
+        NSApplication.shared.activate(ignoringOtherApps: true)
+        for window in NSApplication.shared.windows {
+            window.makeKeyAndOrderFront(nil)
+        }
+    }
+
+    @objc func restartServer(_ sender: Any?) {
+        server?.startListening()
+    }
+
+    @objc func quitApp(_ sender: Any?) {
+        NSApplication.shared.terminate(nil)
+    }
+}
+
 struct ContentView: View {
-    @StateObject private var server = MirroringServer()
+    @StateObject private var server: MirroringServer
     @State private var showAdvancedStats = false
     @State private var uptimeTimer: Timer?
     @State private var serverUptime: TimeInterval = 0
-    // ADD: Menu bar and system integration
     @State private var showInMenuBar = true
     @State private var startOnLogin = false
     @State private var showNotifications = true
+    @State private var statusBarItem: NSStatusItem?
+    private let menuActions: MenuActions
+
+    init() {
+        let srv = MirroringServer()
+        _server = StateObject(wrappedValue: srv)
+        menuActions = MenuActions(server: srv)
+    }
     
     var body: some View {
         VStack(spacing: 25) {
@@ -29,7 +58,6 @@ struct ContentView: View {
                 Spacer()
                 
                 HStack(spacing: 12) {
-                    // ADD: Settings button
                     Button(action: {
                         showSettingsPanel()
                     }) {
@@ -46,7 +74,6 @@ struct ContentView: View {
                             .foregroundColor(.blue)
                     }
                     
-                    // ADD: Menu bar toggle
                     Button(action: {
                         toggleMenuBarMode()
                     }) {
@@ -64,7 +91,6 @@ struct ContentView: View {
                         .fill(server.isRunning ? .green.opacity(0.2) : .orange.opacity(0.2))
                         .frame(width: 100, height: 100)
                     
-                    // ADD: Animated indicator
                     if server.connectedClients > 0 {
                         Circle()
                             .stroke(.green, lineWidth: 3)
@@ -88,7 +114,6 @@ struct ContentView: View {
             
             connectionStatusView
             
-            // ADD: Quick actions section
             quickActionsView
             
             Spacer()
@@ -106,7 +131,6 @@ struct ContentView: View {
         }
     }
     
-    // ADD: Quick actions view
     private var quickActionsView: some View {
         VStack(spacing: 12) {
             Text("Quick Actions")
@@ -179,7 +203,6 @@ struct ContentView: View {
                     statusBadge("Service", "_macmirror._tcp", .blue)
                     statusBadge("Port", "8080", .green)
                     statusBadge("Uptime", formattedUptime, .orange)
-                    // ADD: Network status
                     statusBadge("Network", getNetworkName(), .cyan)
                 }
             }
@@ -199,7 +222,6 @@ struct ContentView: View {
                 statCard("Capture Mode", server.captureMode.rawValue, "viewfinder", .purple)
                 statCard("Memory Usage", "< 200MB", "memorychip", .red)
                 statCard("CPU Usage", "< 20%", "cpu", .cyan)
-                // ADD: Additional stats
                 statCard("Data Sent", formatDataSize(server.totalDataSent), "arrow.up.circle", .indigo)
                 statCard("Frames Sent", "\(server.totalFramesSent)", "photo.stack", .pink)
                 statCard("Avg Quality", "\(Int(server.averageQuality * 100))%", "chart.line.uptrend.xyaxis", .teal)
@@ -212,36 +234,75 @@ struct ContentView: View {
     
     // ... rest of existing code ...
     
-    // ADD: Helper functions
     private func showSettingsPanel() {
         // Show settings panel
     }
     
     private func toggleMenuBarMode() {
         showInMenuBar.toggle()
-        // Implement menu bar mode
-    }
-    
-    private func setupMenuBarIfNeeded() {
         if showInMenuBar {
-            // Setup menu bar icon
+            setupMenuBarIfNeeded()
+        } else {
+            if let item = statusBarItem {
+                NSStatusBar.system.removeStatusItem(item)
+            }
+            statusBarItem = nil
         }
+    }
+
+    private func setupMenuBarIfNeeded() {
+        guard showInMenuBar, statusBarItem == nil else { return }
+
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        item.button?.image = NSImage(systemSymbolName: "display", accessibilityDescription: "Mac Mirroring Server")
+        let menu = NSMenu()
+
+        let showItem = NSMenuItem(title: "Show App", action: #selector(menuActions.showMainWindow(_:)), keyEquivalent: "")
+        showItem.target = menuActions
+        menu.addItem(showItem)
+
+        let restartItem = NSMenuItem(title: "Restart Server", action: #selector(menuActions.restartServer(_:)), keyEquivalent: "r")
+        restartItem.target = menuActions
+        menu.addItem(restartItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        let quitItem = NSMenuItem(title: "Quit", action: #selector(menuActions.quitApp(_:)), keyEquivalent: "q")
+        quitItem.target = menuActions
+        menu.addItem(quitItem)
+
+        item.menu = menu
+        statusBarItem = item
     }
     
     private func restartServer() {
-        // Restart server functionality
+        server.startListening()
+        serverUptime = 0
     }
-    
+
     private func showNetworkInfo() {
-        // Show network information panel
+        let alert = NSAlert()
+        alert.messageText = "Network Information"
+        alert.informativeText = "Connected to \(getNetworkName())"
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
-    
+
     private func showQRCode() {
-        // Show QR code for easy connection
+        let alert = NSAlert()
+        alert.messageText = "Connect via QR Code"
+        alert.informativeText = "Use the iOS app to scan the QR code and connect." 
+        alert.icon = NSImage(systemSymbolName: "qrcode", accessibilityDescription: "QR")
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
-    
+
     private func showLogs() {
-        // Show server logs
+        let alert = NSAlert()
+        alert.messageText = "Server Logs"
+        alert.informativeText = "Logs are available in the Xcode console."
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
     
     private func getNetworkName() -> String {
@@ -270,7 +331,6 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        // ADD: Connection indicator
                         HStack(spacing: 4) {
                             ForEach(0..<3) { index in
                                 Circle()
@@ -441,7 +501,6 @@ struct ContentView: View {
     }
 }
 
-// ADD: Bundle extension
 extension Bundle {
     var buildNumber: String? {
         return infoDictionary?["CFBundleVersion"] as? String
