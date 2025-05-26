@@ -140,7 +140,7 @@ struct ConnectionView: View {
             .sheet(isPresented: $showQRCode) {
                 qrCodeView
             }
-            .onChange(of: connectionHistory) { _ in
+            .onChange(of: connectionHistory) {
                 saveConnectionHistory()
             }
         }
