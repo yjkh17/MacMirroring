@@ -1052,7 +1052,7 @@ struct ConnectionView: View {
     }
 }
 
-struct ConnectionHistoryItem: Identifiable, Codable {
+struct ConnectionHistoryItem: Identifiable, Codable, Equatable {
     let id: UUID
     let macName: String
     let timestamp: Date
@@ -1065,6 +1065,14 @@ struct ConnectionHistoryItem: Identifiable, Codable {
         self.timestamp = timestamp
         self.wasSuccessful = wasSuccessful
         self.duration = duration
+    }
+    
+    static func == (lhs: ConnectionHistoryItem, rhs: ConnectionHistoryItem) -> Bool {
+        return lhs.id == rhs.id &&
+               lhs.macName == rhs.macName &&
+               lhs.timestamp == rhs.timestamp &&
+               lhs.wasSuccessful == rhs.wasSuccessful &&
+               lhs.duration == rhs.duration
     }
 }
 
