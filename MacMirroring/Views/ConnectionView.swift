@@ -139,6 +139,9 @@ struct ConnectionView: View {
             .sheet(isPresented: $showQRCode) {
                 qrCodeView
             }
+            .onChange(of: connectionHistory) { _ in
+                saveConnectionHistory()
+            }
         }
     }
     
@@ -872,10 +875,26 @@ struct ConnectionView: View {
     }
     
     private func loadConnectionHistory() {
-        connectionHistory = []
+        guard let data = UserDefaults.standard.data(forKey: "connectionHistory") else {
+            connectionHistory = []
+            return
+        }
+
+        do {
+            connectionHistory = try JSONDecoder().decode([ConnectionHistoryItem].self, from: data)
+        } catch {
+            print("Failed to decode connection history: \(error)")
+            connectionHistory = []
+        }
     }
-    
+
     private func saveConnectionHistory() {
+        do {
+            let data = try JSONEncoder().encode(connectionHistory)
+            UserDefaults.standard.set(data, forKey: "connectionHistory")
+        } catch {
+            print("Failed to encode connection history: \(error)")
+        }
     }
     
     private func connectionStatusBadge(_ title: String, _ icon: String, _ color: Color) -> some View {
