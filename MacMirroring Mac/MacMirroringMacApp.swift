@@ -33,23 +33,14 @@ struct MacMirriringMacApp: App {
     private func handleScenePhaseChange(_ phase: ScenePhase) {
         switch phase {
         case .background:
-            print(" App entering background - server continues running")
+            print("🖥️ App entering background - server continues running")
         case .inactive:
-            print(" App inactive")
+            print("🖥️ App inactive")
         case .active:
-            print(" App active")
+            print("🖥️ App active")
         @unknown default:
             break
         }
-    }
-}
-
-class MultipeerCapture: ObservableObject {
-    @Published var isAdvertising = false
-    @Published var connectedPeers = [String]()
-    @Published var isCapturing = false
-    
-    init() {
     }
 }
 
