@@ -11,22 +11,9 @@
 		CA4B87072DE24BDF00B474C7 /* MacMirriring Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacMirriring Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CA4B87022DE2463A00B474C7 /* Exceptions for "MacMirroring" folder in "MacMirroring" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = CA4B86E52DE23AF100B474C7 /* MacMirroring */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CA4B86E82DE23AF100B474C7 /* MacMirroring */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				CA4B87022DE2463A00B474C7 /* Exceptions for "MacMirroring" folder in "MacMirroring" target */,
-			);
 			path = MacMirroring;
 			sourceTree = "<group>";
 		};

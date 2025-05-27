@@ -156,5 +156,46 @@ A comprehensive Mac-to-iPhone screen mirroring solution that reverses Apple's tr
 - **Energy Impact**: Low to Medium on iPhone
 - **Network Bandwidth**: 5-50 Mbps depending on quality settings
 
+## Project Structure
+
+```
+MacMirroring/
+├── MacMirroring (iOS App)/
+│   ├── App/
+│   ├── Core/
+│   │   ├── Connection/
+│   │   ├── Managers/
+│   │   └── Models/
+│   ├── Views/
+│   │   ├── Connection/
+│   │   ├── Streaming/
+│   │   └── Settings/
+│   ├── Resources/
+│   └── Entitlements/
+├── MacMirroring Server (macOS)/
+│   ├── App/
+│   ├── Core/
+│   │   ├── Connection/
+│   │   ├── Managers/
+│   │   └── Models/
+│   ├── Views/
+│   ├── Resources/
+│   └── Entitlements/
+├── Shared/
+│   ├── Models/
+│   ├── Extensions/
+│   └── Utilities/
+└── Tests/
+    ├── iOS Tests/
+    └── macOS Tests/
+```
+
+### Build Targets
+
+1. **MacMirroring (iOS)** – main iOS application.
+2. **MacMirroring Server (macOS)** – macOS streaming server.
+3. **MacMirroring Shared** – framework with shared code.
+4. **MacMirroring Extensions (iOS)** – Shortcuts and widgets.
+
 **Status**: Production-ready with professional performance and reliability
 **Last Updated**: January 2025
