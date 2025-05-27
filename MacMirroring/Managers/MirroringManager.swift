@@ -70,6 +70,7 @@ class MirroringManager: ObservableObject {
     private func cleanup() {
         browser?.cancel()
         connection?.cancel()
+        connection = nil
         receivedData.removeAll()
         resetParsingState()
         energyMonitorTimer?.invalidate()
@@ -83,6 +84,9 @@ class MirroringManager: ObservableObject {
         fpsHistory.removeAll()
         averageFPS = 0
         connectionDuration = 0
+        
+        browser = nil
+        setupBrowser()
     }
     
     private func startEnergyMonitoring() {
@@ -466,6 +470,10 @@ class MirroringManager: ObservableObject {
             self.isConnected = false
             self.screenData = nil
             self.serverStatus = nil
+            self.connectionError = nil
+            self.isSearching = false
+            self.availableMacs.removeAll()
+            self.reconnectionAttempts = 0
         }
     }
     
@@ -497,8 +505,17 @@ class MirroringManager: ObservableObject {
     func connectDirectly() {
         print("🔗 Attempting direct connection to Mac...")
         
+        if connection != nil {
+            cleanup()
+        }
+        
+        connectionError = nil
         availableMacs.removeAll()
         isSearching = true
+        
+        if browser == nil {
+            setupBrowser()
+        }
         
         browser?.start(queue: networkQueue)
         
@@ -524,6 +541,7 @@ class MirroringManager: ObservableObject {
                 
                 print("❌ No Macs found after 8 seconds of discovery")
                 self.isSearching = false
+                self.connectionError = .serverNotFound
             }
         }
     }
@@ -533,6 +551,8 @@ class MirroringManager: ObservableObject {
         DispatchQueue.main.async {
             self.isConnected = false
             self.availableMacs.removeAll()
+            self.connectionError = nil
+            self.isSearching = false
         }
         print("🚫 Connection cancelled by user")
     }
