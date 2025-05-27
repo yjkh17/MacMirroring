@@ -160,7 +160,7 @@ A comprehensive Mac-to-iPhone screen mirroring solution that reverses Apple's tr
 
 ```
 MacMirroring/
-├── MacMirroring (iOS App)/
+├── MacMirroring iPhone/
 │   ├── App/
 │   ├── Core/
 │   │   ├── Connection/
@@ -172,7 +172,7 @@ MacMirroring/
 │   │   └── Settings/
 │   ├── Resources/
 │   └── Entitlements/
-├── MacMirroring Server (macOS)/
+├── MacMirroring Mac/
 │   ├── App/
 │   ├── Core/
 │   │   ├── Connection/
@@ -192,8 +192,8 @@ MacMirroring/
 
 ### Build Targets
 
-1. **MacMirroring (iOS)** – main iOS application.
-2. **MacMirroring Server (macOS)** – macOS streaming server.
+1. **MacMirroring iPhone** – main iOS application.
+2. **MacMirroring Mac** – macOS streaming server.
 3. **MacMirroring Shared** – framework with shared code.
 4. **MacMirroring Extensions (iOS)** – Shortcuts and widgets.
 

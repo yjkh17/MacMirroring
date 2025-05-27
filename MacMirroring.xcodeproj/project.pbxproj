@@ -15,16 +15,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		CA9706352DE5D9A9002A4C54 /* MacMirroring (iOS App) */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "MacMirroring (iOS App)";
-			sourceTree = "<group>";
-		};
-		CA97064E2DE5D9C6002A4C54 /* MacMirroring Server (macOS) */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "MacMirroring Server (macOS)";
-			sourceTree = "<group>";
-		};
+               CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */ = {
+                       isa = PBXFileSystemSynchronizedRootGroup;
+                       path = "MacMirroring iPhone";
+                       sourceTree = "<group>";
+               };
+               CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */ = {
+                       isa = PBXFileSystemSynchronizedRootGroup;
+                       path = "MacMirroring Mac";
+                       sourceTree = "<group>";
+               };
 		CA97065C2DE5D9FE002A4C54 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Shared;
@@ -63,8 +63,8 @@
 				CA9706612DE5DA10002A4C54 /* Tests */,
 				CA97065C2DE5D9FE002A4C54 /* Shared */,
 				CA9706552DE5D9E6002A4C54 /* README.md */,
-				CA97064E2DE5D9C6002A4C54 /* MacMirroring Server (macOS) */,
-				CA9706352DE5D9A9002A4C54 /* MacMirroring (iOS App) */,
+                               CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */,
+                               CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */,
 				CA4B86E72DE23AF100B474C7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -93,9 +93,9 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				CA9706352DE5D9A9002A4C54 /* MacMirroring (iOS App) */,
-			);
+                       fileSystemSynchronizedGroups = (
+                               CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */,
+                       );
 			name = MacMirroring;
 			packageProductDependencies = (
 			);
@@ -115,9 +115,9 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				CA97064E2DE5D9C6002A4C54 /* MacMirroring Server (macOS) */,
-			);
+                       fileSystemSynchronizedGroups = (
+                               CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */,
+                       );
 			name = "MacMirriring Server";
 			packageProductDependencies = (
 			);
@@ -396,7 +396,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "MacMirriring Server/MacMirriring_Server.entitlements";
+                               CODE_SIGN_ENTITLEMENTS = "MacMirroring Mac/Entitlements/MacMirroringMac.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -404,7 +404,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "MacMirriring-Server-Info.plist";
+                               INFOPLIST_FILE = "MacMirroring Mac/Resources/MacMirroring-Mac-Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -426,7 +426,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "MacMirriring Server/MacMirriring_Server.entitlements";
+                               CODE_SIGN_ENTITLEMENTS = "MacMirroring Mac/Entitlements/MacMirroringMac.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -434,7 +434,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "MacMirriring-Server-Info.plist";
+                               INFOPLIST_FILE = "MacMirroring Mac/Resources/MacMirroring-Mac-Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

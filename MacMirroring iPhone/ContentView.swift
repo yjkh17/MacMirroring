@@ -2,7 +2,7 @@ import SwiftUI
 import Network
 
 struct ContentView: View {
-    @StateObject private var mirroringManager = MirroringManager()
+    @StateObject private var mirroringManager = MultipeerDisplay()
     @StateObject private var streamingSettings = StreamingSettings()
     @State private var isFullScreen = false
     @State private var showSettings = false
