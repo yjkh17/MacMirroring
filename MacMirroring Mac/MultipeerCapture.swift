@@ -2,7 +2,7 @@ import Foundation
 import MultipeerConnectivity
 import Combine
 import SwiftUI
-import ScreenCaptureKit
+import AppKit
 
 class MultipeerCapture: NSObject, ObservableObject {
     private let peerID = MCPeerID(displayName: Host.current().localizedName ?? "Mac")
@@ -22,7 +22,7 @@ class MultipeerCapture: NSObject, ObservableObject {
     private var captureTimer: Timer?
     private var lastCaptureTime = Date()
     
-    enum CaptureMode {
+    enum CaptureMode: CaseIterable {
         case fullDisplay
         case singleWindow
         
@@ -101,41 +101,41 @@ class MultipeerCapture: NSObject, ObservableObject {
     }
     
     private func captureScreen() async throws -> Data {
-        // Simple screen capture implementation
-        // In a real implementation, you'd use ScreenCaptureKit
-        
-        // For now, create a mock colored image
+        // Create a mock colored image for testing
         let size = CGSize(width: 800, height: 600)
-        let renderer = NSGraphicsImageRenderer(size: size)
+        let image = NSImage(size: size)
         
-        let image = renderer.image { context in
-            // Create a gradient background
-            let colors = [NSColor.blue, NSColor.purple]
-            let gradient = NSGradient(colors: colors)
-            gradient?.draw(in: NSRect(origin: .zero, size: size), angle: 45)
-            
-            // Add timestamp text
-            let text = "Mac Screen - \(Date().formatted(.dateTime.hour().minute().second()))"
-            let attributes: [NSAttributedString.Key: Any] = [
-                .font: NSFont.systemFont(ofSize: 24),
-                .foregroundColor: NSColor.white
-            ]
-            
-            let textSize = text.size(withAttributes: attributes)
-            let textRect = NSRect(
-                x: (size.width - textSize.width) / 2,
-                y: (size.height - textSize.height) / 2,
-                width: textSize.width,
-                height: textSize.height
-            )
-            
-            text.draw(in: textRect, withAttributes: attributes)
-        }
+        image.lockFocus()
+        
+        // Create a gradient background
+        let gradient = NSGradient(colors: [NSColor.blue, NSColor.purple])
+        gradient?.draw(in: NSRect(origin: .zero, size: size), angle: 45)
+        
+        // Add timestamp text
+        let text = "Mac Screen - \(Date().formatted(.dateTime.hour().minute().second()))"
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: 24),
+            .foregroundColor: NSColor.white
+        ]
+        
+        let textSize = text.size(withAttributes: attributes)
+        let textRect = NSRect(
+            x: (size.width - textSize.width) / 2,
+            y: (size.height - textSize.height) / 2,
+            width: textSize.width,
+            height: textSize.height
+        )
+        
+        text.draw(in: textRect, withAttributes: attributes)
+        image.unlockFocus()
         
         // Convert to JPEG data
         guard let tiffData = image.tiffRepresentation,
               let bitmapRep = NSBitmapImageRep(data: tiffData),
-              let jpegData = bitmapRep.representation(using: .jpeg, properties: [.compressionFactor: streamingQuality / 100.0]) else {
+              let jpegData = bitmapRep.representation(
+                using: NSBitmapImageRep.FileType.jpeg,
+                properties: [NSBitmapImageRep.PropertyKey.compressionFactor: Double(streamingQuality) / 100.0]
+              ) else {
             throw NSError(domain: "CaptureError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to create image data"])
         }
         
@@ -146,7 +146,7 @@ class MultipeerCapture: NSObject, ObservableObject {
         guard let session = session, !connectedPeers.isEmpty else { return }
         
         // Create status info
-        let statusInfo = [
+        let statusInfo: [String: Any] = [
             "fps": currentFPS,
             "quality": streamingQuality,
             "latency": networkLatency,
