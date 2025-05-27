@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CA4B86E52DE23AF100B474C7"
-               BuildableName = "MacMirroring.app"
-               BlueprintName = "MacMirroring"
+               BuildableName = "MacMirroring (iOS).app"
+               BlueprintName = "MacMirroring (iOS)"
                ReferencedContainer = "container:MacMirroring.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CA4B86E52DE23AF100B474C7"
-            BuildableName = "MacMirroring.app"
-            BlueprintName = "MacMirroring"
+            BuildableName = "MacMirroring (iOS).app"
+            BlueprintName = "MacMirroring (iOS)"
             ReferencedContainer = "container:MacMirroring.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CA4B86E52DE23AF100B474C7"
-            BuildableName = "MacMirroring.app"
-            BlueprintName = "MacMirroring"
+            BuildableName = "MacMirroring (iOS).app"
+            BlueprintName = "MacMirroring (iOS)"
             ReferencedContainer = "container:MacMirroring.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

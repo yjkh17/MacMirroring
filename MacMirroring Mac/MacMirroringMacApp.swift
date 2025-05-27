@@ -9,14 +9,14 @@ import SwiftUI
 import AppKit
 
 @main
-struct MacMirriring_ServerApp: App {
-    @StateObject private var serverManager = BackgroundServerManager()
+struct MacMirriringMacApp: App {
+    @StateObject private var multipeerCapture = MultipeerCapture()
     @Environment(\.scenePhase) private var scenePhase
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(serverManager)
+            ServerContentView()
+                .environmentObject(multipeerCapture)
         }
         .windowStyle(DefaultWindowStyle())
         .onChange(of: scenePhase) { oldPhase, newPhase in
@@ -25,7 +25,7 @@ struct MacMirriring_ServerApp: App {
         
         MenuBarExtra("Mac Mirroring Server", systemImage: "display.trianglebadge.exclamationmark") {
             MenuBarView()
-                .environmentObject(serverManager)
+                .environmentObject(multipeerCapture)
         }
         .menuBarExtraStyle(.window)
     }
@@ -34,86 +34,27 @@ struct MacMirriring_ServerApp: App {
         switch phase {
         case .background:
             print(" App entering background - server continues running")
-            serverManager.enableBackgroundMode()
         case .inactive:
             print(" App inactive")
         case .active:
             print(" App active")
-            serverManager.disableBackgroundMode()
         @unknown default:
             break
         }
     }
 }
 
-class BackgroundServerManager: ObservableObject {
-    @Published var isBackgroundMode = false
-    @Published var serverStatus = "Ready"
-    @Published var connectedDevices = 0
-    
-    private var mirroringServer: MirroringServer?
-    private var statusBarItem: NSStatusItem?
+class MultipeerCapture: ObservableObject {
+    @Published var isAdvertising = false
+    @Published var connectedPeers = [String]()
+    @Published var isCapturing = false
     
     init() {
-        setupBackgroundServer()
-        setupStatusBarItem()
-    }
-    
-    private func setupBackgroundServer() {
-        mirroringServer = MirroringServer()
-        print(" Background server initialized")
-    }
-    
-    private func setupStatusBarItem() {
-        statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusBarItem?.button?.image = NSImage(systemSymbolName: "display.trianglebadge.exclamationmark", accessibilityDescription: "Mac Mirroring Server")
-        statusBarItem?.button?.toolTip = "Mac Mirroring Server - Always Ready"
-        
-        let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Mac Mirroring Server", action: nil, keyEquivalent: ""))
-        menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Status: Ready", action: nil, keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "Connected Devices: 0", action: nil, keyEquivalent: ""))
-        menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Show Window", action: #selector(showMainWindow), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q"))
-        
-        statusBarItem?.menu = menu
-    }
-    
-    @objc public func showMainWindow() {
-        NSApplication.shared.activate(ignoringOtherApps: true)
-        for window in NSApplication.shared.windows {
-            window.makeKeyAndOrderFront(nil)
-        }
-    }
-    
-    @objc private func quitApp() {
-        NSApplication.shared.terminate(nil)
-    }
-    
-    func enableBackgroundMode() {
-        isBackgroundMode = true
-        updateStatusBarMenu()
-        print(" Background mode enabled - server continues running")
-    }
-    
-    func disableBackgroundMode() {
-        isBackgroundMode = false
-        updateStatusBarMenu()
-        print(" Foreground mode - full UI available")
-    }
-    
-    private func updateStatusBarMenu() {
-        guard let menu = statusBarItem?.menu else { return }
-        
-        menu.item(at: 2)?.title = "Status: \(isBackgroundMode ? "Background" : "Foreground")"
-        menu.item(at: 3)?.title = "Connected Devices: \(connectedDevices)"
     }
 }
 
 struct MenuBarView: View {
-    @EnvironmentObject var serverManager: BackgroundServerManager
+    @EnvironmentObject var multipeerCapture: MultipeerCapture
     
     var body: some View {
         VStack(spacing: 12) {
@@ -130,22 +71,22 @@ struct MenuBarView: View {
                 HStack {
                     Text("Status:")
                     Spacer()
-                    Text(serverManager.isBackgroundMode ? "Background" : "Active")
-                        .foregroundColor(serverManager.isBackgroundMode ? .orange : .green)
+                    Text(multipeerCapture.isAdvertising ? "Active" : "Inactive")
+                        .foregroundColor(multipeerCapture.isAdvertising ? .green : .orange)
                 }
                 
                 HStack {
                     Text("Connected:")
                     Spacer()
-                    Text("\(serverManager.connectedDevices) devices")
+                    Text("\(multipeerCapture.connectedPeers.count) devices")
                         .foregroundColor(.blue)
                 }
                 
                 HStack {
-                    Text("Server:")
+                    Text("Capturing:")
                     Spacer()
-                    Text("Always Running")
-                        .foregroundColor(.green)
+                    Text(multipeerCapture.isCapturing ? "Yes" : "No")
+                        .foregroundColor(multipeerCapture.isCapturing ? .green : .gray)
                 }
             }
             .font(.caption)
@@ -153,7 +94,7 @@ struct MenuBarView: View {
             Divider()
             
             Button("Show Main Window") {
-                serverManager.showMainWindow()
+                showMainWindow()
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
@@ -167,5 +108,12 @@ struct MenuBarView: View {
         }
         .padding()
         .frame(width: 200)
+    }
+    
+    private func showMainWindow() {
+        NSApplication.shared.activate(ignoringOtherApps: true)
+        for window in NSApplication.shared.windows {
+            window.makeKeyAndOrderFront(nil)
+        }
     }
 }

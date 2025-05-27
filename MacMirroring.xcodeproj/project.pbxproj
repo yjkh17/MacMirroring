@@ -7,24 +7,42 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		CA4B86E62DE23AF100B474C7 /* MacMirroring.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacMirroring.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CA4B87072DE24BDF00B474C7 /* MacMirriring Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacMirriring Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA4B86E62DE23AF100B474C7 /* MacMirroring (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacMirroring (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA4B87072DE24BDF00B474C7 /* MacMirriring Server (macOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacMirriring Server (macOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA9706552DE5D9E6002A4C54 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CA9706622DE5DA19002A4C54 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		CA9706632DE5DA21002A4C54 /* ISSUES_TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ISSUES_TODO.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CA01039D2DE5F23A00C922C7 /* Exceptions for "MacMirroring iPhone" folder in "MacMirroring (iOS)" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = CA4B86E52DE23AF100B474C7 /* MacMirroring (iOS) */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-               CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */ = {
-                       isa = PBXFileSystemSynchronizedRootGroup;
-                       path = "MacMirroring iPhone";
-                       sourceTree = "<group>";
-               };
-               CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */ = {
-                       isa = PBXFileSystemSynchronizedRootGroup;
-                       path = "MacMirroring Mac";
-                       sourceTree = "<group>";
-               };
+		CA0103332DE5E15B00C922C7 /* Both */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Both;
+			sourceTree = "<group>";
+		};
+		CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CA01039D2DE5F23A00C922C7 /* Exceptions for "MacMirroring iPhone" folder in "MacMirroring (iOS)" target */,
+			);
+			path = "MacMirroring iPhone";
+			sourceTree = "<group>";
+		};
+		CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "MacMirroring Mac";
+			sourceTree = "<group>";
+		};
 		CA97065C2DE5D9FE002A4C54 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Shared;
@@ -58,13 +76,14 @@
 		CA4B86DD2DE23AF100B474C7 = {
 			isa = PBXGroup;
 			children = (
+				CA0103332DE5E15B00C922C7 /* Both */,
 				CA9706632DE5DA21002A4C54 /* ISSUES_TODO.md */,
 				CA9706622DE5DA19002A4C54 /* LICENSE */,
 				CA9706612DE5DA10002A4C54 /* Tests */,
 				CA97065C2DE5D9FE002A4C54 /* Shared */,
 				CA9706552DE5D9E6002A4C54 /* README.md */,
-                               CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */,
-                               CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */,
+				CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */,
+				CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */,
 				CA4B86E72DE23AF100B474C7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -72,8 +91,8 @@
 		CA4B86E72DE23AF100B474C7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CA4B86E62DE23AF100B474C7 /* MacMirroring.app */,
-				CA4B87072DE24BDF00B474C7 /* MacMirriring Server.app */,
+				CA4B86E62DE23AF100B474C7 /* MacMirroring (iOS).app */,
+				CA4B87072DE24BDF00B474C7 /* MacMirriring Server (macOS).app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,9 +100,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CA4B86E52DE23AF100B474C7 /* MacMirroring */ = {
+		CA4B86E52DE23AF100B474C7 /* MacMirroring (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CA4B86F12DE23AF200B474C7 /* Build configuration list for PBXNativeTarget "MacMirroring" */;
+			buildConfigurationList = CA4B86F12DE23AF200B474C7 /* Build configuration list for PBXNativeTarget "MacMirroring (iOS)" */;
 			buildPhases = (
 				CA4B86E22DE23AF100B474C7 /* Sources */,
 				CA4B86E32DE23AF100B474C7 /* Frameworks */,
@@ -93,19 +112,21 @@
 			);
 			dependencies = (
 			);
-                       fileSystemSynchronizedGroups = (
-                               CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */,
-                       );
-			name = MacMirroring;
+			fileSystemSynchronizedGroups = (
+				CA0103332DE5E15B00C922C7 /* Both */,
+				CA9706352DE5D9A9002A4C54 /* MacMirroring iPhone */,
+				CA97065C2DE5D9FE002A4C54 /* Shared */,
+			);
+			name = "MacMirroring (iOS)";
 			packageProductDependencies = (
 			);
 			productName = MacMirroring;
-			productReference = CA4B86E62DE23AF100B474C7 /* MacMirroring.app */;
+			productReference = CA4B86E62DE23AF100B474C7 /* MacMirroring (iOS).app */;
 			productType = "com.apple.product-type.application";
 		};
-		CA4B87062DE24BDF00B474C7 /* MacMirriring Server */ = {
+		CA4B87062DE24BDF00B474C7 /* MacMirriring Server (macOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CA4B87102DE24BE000B474C7 /* Build configuration list for PBXNativeTarget "MacMirriring Server" */;
+			buildConfigurationList = CA4B87102DE24BE000B474C7 /* Build configuration list for PBXNativeTarget "MacMirriring Server (macOS)" */;
 			buildPhases = (
 				CA4B87032DE24BDF00B474C7 /* Sources */,
 				CA4B87042DE24BDF00B474C7 /* Frameworks */,
@@ -115,14 +136,16 @@
 			);
 			dependencies = (
 			);
-                       fileSystemSynchronizedGroups = (
-                               CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */,
-                       );
-			name = "MacMirriring Server";
+			fileSystemSynchronizedGroups = (
+				CA0103332DE5E15B00C922C7 /* Both */,
+				CA97064E2DE5D9C6002A4C54 /* MacMirroring Mac */,
+				CA97065C2DE5D9FE002A4C54 /* Shared */,
+			);
+			name = "MacMirriring Server (macOS)";
 			packageProductDependencies = (
 			);
 			productName = "MacMirriring Server";
-			productReference = CA4B87072DE24BDF00B474C7 /* MacMirriring Server.app */;
+			productReference = CA4B87072DE24BDF00B474C7 /* MacMirriring Server (macOS).app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -157,8 +180,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CA4B86E52DE23AF100B474C7 /* MacMirroring */,
-				CA4B87062DE24BDF00B474C7 /* MacMirriring Server */,
+				CA4B86E52DE23AF100B474C7 /* MacMirroring (iOS) */,
+				CA4B87062DE24BDF00B474C7 /* MacMirriring Server (macOS) */,
 			);
 		};
 /* End PBXProject section */
@@ -328,8 +351,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PPNNAHD8ZD;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MacMirroring/Info.plist;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MacMirroring iPhone/Resources/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Mac Mirroring";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs access to the local network to discover and connect to Mac computers for screen mirroring.";
@@ -364,8 +387,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PPNNAHD8ZD;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MacMirroring/Info.plist;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MacMirroring iPhone/Resources/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Mac Mirroring";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs access to the local network to discover and connect to Mac computers for screen mirroring.";
@@ -396,7 +419,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-                               CODE_SIGN_ENTITLEMENTS = "MacMirroring Mac/Entitlements/MacMirroringMac.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "MacMirroring Mac/Entitlements/MacMirroringMac.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -404,7 +427,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-                               INFOPLIST_FILE = "MacMirroring Mac/Resources/MacMirroring-Mac-Info.plist";
+				INFOPLIST_FILE = "MacMirroring Mac/Resources/MacMirroring-Mac-Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -426,7 +449,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-                               CODE_SIGN_ENTITLEMENTS = "MacMirroring Mac/Entitlements/MacMirroringMac.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "MacMirroring Mac/Entitlements/MacMirroringMac.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -434,7 +457,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-                               INFOPLIST_FILE = "MacMirroring Mac/Resources/MacMirroring-Mac-Info.plist";
+				INFOPLIST_FILE = "MacMirroring Mac/Resources/MacMirroring-Mac-Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -463,7 +486,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CA4B86F12DE23AF200B474C7 /* Build configuration list for PBXNativeTarget "MacMirroring" */ = {
+		CA4B86F12DE23AF200B474C7 /* Build configuration list for PBXNativeTarget "MacMirroring (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA4B86F22DE23AF200B474C7 /* Debug */,
@@ -472,7 +495,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CA4B87102DE24BE000B474C7 /* Build configuration list for PBXNativeTarget "MacMirriring Server" */ = {
+		CA4B87102DE24BE000B474C7 /* Build configuration list for PBXNativeTarget "MacMirriring Server (macOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA4B87112DE24BE000B474C7 /* Debug */,
