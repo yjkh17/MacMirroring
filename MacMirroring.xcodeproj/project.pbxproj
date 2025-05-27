@@ -9,17 +9,30 @@
 /* Begin PBXFileReference section */
 		CA4B86E62DE23AF100B474C7 /* MacMirroring.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacMirroring.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA4B87072DE24BDF00B474C7 /* MacMirriring Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacMirriring Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA9706552DE5D9E6002A4C54 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		CA9706622DE5DA19002A4C54 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		CA9706632DE5DA21002A4C54 /* ISSUES_TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ISSUES_TODO.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		CA4B86E82DE23AF100B474C7 /* MacMirroring */ = {
+		CA9706352DE5D9A9002A4C54 /* MacMirroring (iOS App) */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MacMirroring;
+			path = "MacMirroring (iOS App)";
 			sourceTree = "<group>";
 		};
-		CA4B87082DE24BDF00B474C7 /* MacMirriring Server */ = {
+		CA97064E2DE5D9C6002A4C54 /* MacMirroring Server (macOS) */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "MacMirriring Server";
+			path = "MacMirroring Server (macOS)";
+			sourceTree = "<group>";
+		};
+		CA97065C2DE5D9FE002A4C54 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		CA9706612DE5DA10002A4C54 /* Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,8 +58,13 @@
 		CA4B86DD2DE23AF100B474C7 = {
 			isa = PBXGroup;
 			children = (
-				CA4B86E82DE23AF100B474C7 /* MacMirroring */,
-				CA4B87082DE24BDF00B474C7 /* MacMirriring Server */,
+				CA9706632DE5DA21002A4C54 /* ISSUES_TODO.md */,
+				CA9706622DE5DA19002A4C54 /* LICENSE */,
+				CA9706612DE5DA10002A4C54 /* Tests */,
+				CA97065C2DE5D9FE002A4C54 /* Shared */,
+				CA9706552DE5D9E6002A4C54 /* README.md */,
+				CA97064E2DE5D9C6002A4C54 /* MacMirroring Server (macOS) */,
+				CA9706352DE5D9A9002A4C54 /* MacMirroring (iOS App) */,
 				CA4B86E72DE23AF100B474C7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -76,7 +94,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				CA4B86E82DE23AF100B474C7 /* MacMirroring */,
+				CA9706352DE5D9A9002A4C54 /* MacMirroring (iOS App) */,
 			);
 			name = MacMirroring;
 			packageProductDependencies = (
@@ -98,7 +116,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				CA4B87082DE24BDF00B474C7 /* MacMirriring Server */,
+				CA97064E2DE5D9C6002A4C54 /* MacMirroring Server (macOS) */,
 			);
 			name = "MacMirriring Server";
 			packageProductDependencies = (
